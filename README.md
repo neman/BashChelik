@@ -1,2 +1,2 @@
 # BashChelik
-.NET Interop for Serbian eID smart cards
+.NET Wrapper for Serbian eID smart cards
