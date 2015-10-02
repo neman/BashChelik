@@ -86,7 +86,7 @@ namespace BashChelik
         {
             string result = "Unrecognized error code: " + errorCode;
 
-            var errorFields = typeof(EidErrorCodes).GetFields().Union(typeof(SmartCardError).GetFields());
+            var errorFields = typeof(EidErrorCodes).GetFields();
             var foundField = errorFields
                 .Select(x => new { Field = x, Code = (short)x.GetValue(x)})
                 .FirstOrDefault(x => x.Code == errorCode);
