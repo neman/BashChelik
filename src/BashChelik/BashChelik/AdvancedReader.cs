@@ -59,8 +59,11 @@ namespace BashChelik
             return result;
         }
 
-        public CertificateData ReadCertificateData()
+        public CertificateData ReadCertificateData(CardType cardType)
         {
+            ///CelikAPI cannot read certificates from new cards (Gemalto) Result is always EID_E_UNABLE_TO_EXECUTE
+            if (cardType == CardType.NewCardGemalto) return null;
+
             EID_CERTIFICATE nativeCertificateData = new EID_CERTIFICATE();
             //TODO: Get all available certificates at read
             var nativeResult = NativeMethods.EidReadCertificate(ref nativeCertificateData, 1);

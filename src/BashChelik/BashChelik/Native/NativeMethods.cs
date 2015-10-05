@@ -31,7 +31,7 @@ namespace BashChelik.Native
         /// Return Type: int
         /// pnCardVersion: pnCardVersion
         [DllImport(ImportedDLL)]
-        internal static extern int EidBeginRead(string szReader,int pnCardVersion);
+        internal static extern int EidBeginRead(string szReader, out int pnCardVersion);
 
         /// Return Type: int
         [DllImport(ImportedDLL)]

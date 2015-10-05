@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BashChelik</RootNamespace>
     <AssemblyName>BashChelik</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +48,7 @@
   <ItemGroup>
     <Compile Include="AdvancedReader.cs" />
     <Compile Include="BashChelikException.cs" />
+    <Compile Include="DataModel\CardType.cs" />
     <Compile Include="DataModel\CertificateData.cs" />
     <Compile Include="DataModel\DocumentData.cs" />
     <Compile Include="DataModel\ElectronicIdentificationData.cs" />
