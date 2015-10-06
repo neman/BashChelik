@@ -21,11 +21,11 @@ namespace BashChelik.DataModel
 
         public DocumentData(EID_DOCUMENT_DATA nativeData)
         {
-            DocumentRegistrationNumber = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.docRegNo));
-            DocumentType = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.documentType));            
-            IssuingDate = Encoding.UTF8.GetString(nativeData.issuingDate);
-            ExpiryDate = Encoding.UTF8.GetString(nativeData.expiryDate);
-            IssuingAuthority = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.issuingAuthority));
+            DocumentRegistrationNumber = Encoding.UTF8.GetString(nativeData.docRegNo, 0, nativeData.docRegNoSize);
+            DocumentType = Encoding.UTF8.GetString(nativeData.documentType, 0, nativeData.documentTypeSize);
+            IssuingDate = Encoding.UTF8.GetString(nativeData.issuingDate, 0, nativeData.issuingDateSize);
+            ExpiryDate = Encoding.UTF8.GetString(nativeData.expiryDate, 0, nativeData.expiryDateSize);
+            IssuingAuthority = Encoding.UTF8.GetString(nativeData.issuingAuthority, 0, nativeData.issuingAuthoritySize);            
         }
     }
 }

@@ -15,7 +15,7 @@ namespace BashChelik.DataModel
 
         public PortraitData(EID_PORTRAIT nativeData)
         {
-            using (var stream = new MemoryStream(nativeData.portrait))
+            using (var stream = new MemoryStream(nativeData.portrait, 0, nativeData.portraitSize))
             using (var image = Image.FromStream(stream, false, true))
             {
                 Portrait = new Bitmap(image);

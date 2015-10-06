@@ -23,17 +23,17 @@ namespace BashChelik.DataModel
 
         public VariablePersonalData(EID_VARIABLE_PERSONAL_DATA nativeData)
         {
-            State = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.state));
-            Community = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.community));
-            Place = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.place));
-            Street = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.street));
-            HouseNumber = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.houseNumber));
-            HouseLetter = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.houseLetter));
-            Entrance = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.entrance));
-            Floor = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.floor));
-            ApartmentNumber = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.apartmentNumber));
-            AddressDate = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.addressDate));
-            AddressLabel = Encoding.UTF8.GetString(Util.TrimTrailingZeroes(nativeData.addressLabel));
+            State = Encoding.UTF8.GetString(nativeData.state, 0, nativeData.stateSize);
+            Community = Encoding.UTF8.GetString(nativeData.community, 0, nativeData.communitySize);
+            Place = Encoding.UTF8.GetString(nativeData.place, 0, nativeData.placeSize);
+            Street = Encoding.UTF8.GetString(nativeData.street, 0, nativeData.streetSize);
+            HouseNumber = Encoding.UTF8.GetString(nativeData.houseNumber, 0, nativeData.houseNumberSize);
+            HouseLetter = Encoding.UTF8.GetString(nativeData.houseLetter, 0, nativeData.houseLetterSize);
+            Entrance = Encoding.UTF8.GetString(nativeData.entrance, 0, nativeData.entranceSize);
+            Floor = Encoding.UTF8.GetString(nativeData.floor, 0, nativeData.floorSize);
+            ApartmentNumber = Encoding.UTF8.GetString(nativeData.apartmentNumber, 0, nativeData.apartmentNumberSize);
+            AddressDate = Encoding.UTF8.GetString(nativeData.addressDate, 0, nativeData.addressDateSize);
+            AddressLabel = Encoding.UTF8.GetString(nativeData.addressLabel, 0, nativeData.addressLabelSize);
         }
 
     }
