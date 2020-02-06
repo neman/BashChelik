@@ -24,6 +24,8 @@ namespace BashChelik.ConsoleApp
                 {
                     File.WriteAllBytes("certificate.cer", data.CertificateData.Certificate);
                 }
+
+                Console.WriteLine(data.FixedPersonalData.GivenName);
             }
             catch (Exception ex)
             {
