@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BashChelik", "BashChelik\BashChelik.csproj", "{32F36ED1-6B6B-4304-9666-3F7232F738DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BashChelik", "src\BashChelik\BashChelik.csproj", "{32F36ED1-6B6B-4304-9666-3F7232F738DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BashChelik.ConsoleApp", "BashChelik.ConsoleApp\BashChelik.ConsoleApp.csproj", "{F0868D76-E2F5-4F35-99A8-EB6389E5833F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BashChelik.ConsoleApp", "src\BashChelik.ConsoleApp\BashChelik.ConsoleApp.csproj", "{F0868D76-E2F5-4F35-99A8-EB6389E5833F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
