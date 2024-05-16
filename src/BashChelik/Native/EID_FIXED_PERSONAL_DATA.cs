@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace BashChelik.Native
 {
-
     [StructLayout(LayoutKind.Sequential)]
     public struct EID_FIXED_PERSONAL_DATA
     {
@@ -17,7 +11,7 @@ namespace BashChelik.Native
 
         /// int
         public int personalNumberSize;
-        
+
         /// char[]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_Surname)]
         public byte[] surname;
@@ -59,7 +53,7 @@ namespace BashChelik.Native
 
         /// int
         public int stateOfBirthSize;
-        
+
         /// char[]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_DateOfBirth)]
         public byte[] dateOfBirth;
@@ -73,6 +67,29 @@ namespace BashChelik.Native
 
         /// int
         public int communityOfBirthSize;
-     
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_StatusOfForeigner)]
+        public byte[] statusOfForeigner;
+
+        /// int
+        public int statusOfForeignerSize;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_NationalityFull)]
+        public byte[] nationalityFull;
+
+        /// int
+        public int nationalityFullSize;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_PurposeOfStay)]
+        public byte[] purposeOfStay;
+
+        /// int
+        public int purposeOfStaySize;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_ENote)]
+        public byte[] ENote;
+
+        /// int
+        public int ENoteSize;
     }
 }

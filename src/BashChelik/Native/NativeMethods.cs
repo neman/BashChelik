@@ -41,7 +41,7 @@ namespace BashChelik.Native
         /// Return Type: int
         ///pData: PEID_DOCUMENT_DATA->EID_DOCUMENT_DATA*
         [DllImport(ImportedDLL)]
-        internal static extern int EidReadDocumentData(ref EID_DOCUMENT_DATA pData);
+        internal static extern int EidReadDocumentData(ref EidDocumentData pData);
 
         /// Return Type: int
         ///pData: PEID_FIXED_PERSONAL_DATA->tagEID_FIXED_PERSONAL_DATA*

@@ -17,26 +17,25 @@ namespace BashChelik
             int nativeResult = NativeMethods.EidStartup(apiVersion);
             CheckNativeResult(nativeResult);
         }
-                
-       
-        public DocumentData ReadDocumentData()
+
+        public Document ReadDocumentData()
         {
-            EID_DOCUMENT_DATA nativeDocumentData = new EID_DOCUMENT_DATA();
+            EidDocumentData nativeDocumentData = new EidDocumentData();
             int nativeResult = NativeMethods.EidReadDocumentData(ref nativeDocumentData);
             CheckNativeResult(nativeResult);
-            DocumentData result = new DocumentData(nativeDocumentData);
+            Document result = Document.CreateFromNativeData(nativeDocumentData);
 
             return result;
         }
 
         public FixedPersonalData ReadFixedPersonalData()
         {
-            EID_FIXED_PERSONAL_DATA nativeFixedPersonalData = new EID_FIXED_PERSONAL_DATA();
-            var nativeResult = NativeMethods.EidReadFixedPersonalData(ref nativeFixedPersonalData);
-            CheckNativeResult(nativeResult);
-            FixedPersonalData result = new FixedPersonalData(nativeFixedPersonalData);
-
-            return result;
+                EID_FIXED_PERSONAL_DATA nativeFixedPersonalData = new EID_FIXED_PERSONAL_DATA();
+                int nativeResult = NativeMethods.EidReadFixedPersonalData(ref nativeFixedPersonalData);
+                CheckNativeResult(nativeResult);
+                FixedPersonalData result = new FixedPersonalData(nativeFixedPersonalData);
+                return result;
+            
         }
 
         public VariablePersonalData ReadVariablePersonalData()
@@ -73,7 +72,6 @@ namespace BashChelik
             return result;
         }
 
-
         internal static void CheckNativeResult(int nativeResult)
         {
             if (nativeResult == EidErrorCodes.EID_OK)
@@ -81,7 +79,6 @@ namespace BashChelik
 
             var message = GetErrorMessage(nativeResult);
 
-            
             throw new BashChelikException(message, nativeResult);
         }
 
@@ -91,7 +88,7 @@ namespace BashChelik
 
             var errorFields = typeof(EidErrorCodes).GetFields();
             var foundField = errorFields
-                .Select(x => new { Field = x, Code = (short)x.GetValue(x)})
+                .Select(x => new { Field = x, Code = (short)x.GetValue(x) })
                 .FirstOrDefault(x => x.Code == errorCode);
 
             if (foundField != null)
@@ -111,7 +108,6 @@ namespace BashChelik
             return result;
         }
 
-
         private bool disposed;
 
         public void Dispose()
@@ -123,7 +119,6 @@ namespace BashChelik
             ResolveNativeResult(nativeResult);
             nativeResult = NativeMethods.EidCleanup();
             ResolveNativeResult(nativeResult);
-
         }
 
         private static void ResolveNativeResult(int nativeResult)

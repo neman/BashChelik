@@ -50,14 +50,14 @@
     <Compile Include="BashChelikException.cs" />
     <Compile Include="DataModel\CardType.cs" />
     <Compile Include="DataModel\CertificateData.cs" />
-    <Compile Include="DataModel\DocumentData.cs" />
+    <Compile Include="DataModel\Document.cs" />
     <Compile Include="DataModel\ElectronicIdentificationData.cs" />
     <Compile Include="DataModel\FixedPersonalData.cs" />
     <Compile Include="DataModel\Portrait.cs" />
     <Compile Include="DataModel\VariablePersonalData.cs" />
     <Compile Include="ElectronicIdReader.cs" />
     <Compile Include="Native\EID_CERTIFICATE.cs" />
-    <Compile Include="Native\EID_DOCUMENT_DATA.cs" />
+    <Compile Include="Native\EidDocumentData.cs" />
     <Compile Include="Native\EIDErrorCodes.cs" />
     <Compile Include="Native\EID_FIXED_PERSONAL_DATA.cs" />
     <Compile Include="Native\EID_PORTRAIT.cs" />

@@ -76,7 +76,7 @@ namespace BashChelik.Native
         public int apartmentNumberSize;
 
         /// char[]
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_AddressDate-1)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_AddressDate)]
         public byte[] addressDate;
 
         /// int

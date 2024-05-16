@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BashChelik.Native
+﻿namespace BashChelik.Native
 {
-    class NativeConstants
+    internal class NativeConstants
     {
         ///Size of all UTF-8 and binary fields in bytes
 
@@ -24,7 +18,9 @@ namespace BashChelik.Native
         #endregion EID_DOCUMENT_DATA Size
 
         ///Size of all UTF-8 and binary fields in bytes
-        #region EID_FIXED_PERSONAL_DATA Size        
+
+        #region EID_FIXED_PERSONAL_DATA Size
+
         internal const int EID_MAX_PersonalNumber = 13;
         internal const int EID_MAX_Surname = 200;
         internal const int EID_MAX_GivenName = 200;
@@ -34,10 +30,17 @@ namespace BashChelik.Native
         internal const int EID_MAX_StateOfBirth = 200;
         internal const int EID_MAX_DateOfBirth = 10;
         internal const int EID_MAX_CommunityOfBirth = 200;
-        #endregion
+        internal const int EID_MAX_StatusOfForeigner = 200;
+        internal const int EID_MAX_NationalityFull = 200;
+        internal const int EID_MAX_PurposeOfStay = 200;
+        internal const int EID_MAX_ENote = 200;
+
+        #endregion EID_FIXED_PERSONAL_DATA Size
 
         ///Size of all UTF-8 and binary fields in bytes
-        #region EID_VARIABLE_PERSONAL_DATA Size 
+
+        #region EID_VARIABLE_PERSONAL_DATA Size
+
         internal const int EID_MAX_State = 100;
         internal const int EID_MAX_Community = 200;
         internal const int EID_MAX_Place = 200;
@@ -49,18 +52,24 @@ namespace BashChelik.Native
         internal const int EID_MAX_ApartmentNumber = 12;
         internal const int EID_MAX_AddressDate = 10;
         internal const int EID_MAX_AddressLabel = 60;
-        #endregion
+
+        #endregion EID_VARIABLE_PERSONAL_DATA Size
 
         ///Size of all UTF-8 and binary fields in bytes
+
         #region EID_PORTRAIT
+
         internal const int EID_MAX_Portrait = 7700;
-        #endregion
+
+        #endregion EID_PORTRAIT
 
         ///Size of all UTF-8 and binary fields in bytes
-        #region EID_CERTIFICATE
-        internal const int EID_MAX_Certificate = 2048;
-        #endregion
 
+        #region EID_CERTIFICATE
+
+        internal const int EID_MAX_Certificate = 2048;
+
+        #endregion EID_CERTIFICATE
 
         //
         // Option identifiers, used in function EidSetOption
@@ -71,6 +80,7 @@ namespace BashChelik.Native
         // Certificate types, used in function EidReadCertificate
         //
         internal const int EID_Cert_MoiIntermediateCA = 1;
+
         internal const int EID_Cert_User1 = 2;
         internal const int EID_Cert_User2 = 3;
 
@@ -85,6 +95,5 @@ namespace BashChelik.Native
         // For new card version EidVerifySignature function will return EID_E_UNABLE_TO_EXECUTE for
         // parameter EID_SIG_PORTRAIT. Portrait is in new cards part of EID_SIG_FIXED. To determine
         // the card version use second parameter of function EidBeginRead
-
     }
 }

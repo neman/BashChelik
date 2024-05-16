@@ -35,16 +35,15 @@ namespace BashChelik
             
         }
 
-        public static ElectronicIdentificationData ReadAll(string readerName, int apiVersion = 2)
+        public static ElectronicIdentificationData ReadAll(string readerName, int apiVersion = 4)
         {
             using (var advancedReader = new AdvancedReader(apiVersion))
             {
-                int cardType = 0;
-                var nativeResult = NativeMethods.EidBeginRead(readerName, out cardType);
+                var nativeResult = NativeMethods.EidBeginRead(readerName, out int cardType);
                 AdvancedReader.CheckNativeResult(nativeResult);
                 ElectronicIdentificationData result = new ElectronicIdentificationData();
                 result.CardType = (CardType)cardType;
-                result.DocumentData = advancedReader.ReadDocumentData();                
+                result.Document = advancedReader.ReadDocumentData();                
                 result.FixedPersonalData = advancedReader.ReadFixedPersonalData();
                 result.VariablePersonalData = advancedReader.ReadVariablePersonalData();
                 result.PortraitData = advancedReader.ReadPortraitData();
