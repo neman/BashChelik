@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BashChelik.DataModel
+﻿namespace BashChelik.DataModel
 {
     public class ElectronicIdentificationData
     {
         public CardType CardType { get; set; }
-        public DocumentData DocumentData { get; set; }
+        public Document Document { get; set; }
         public FixedPersonalData FixedPersonalData { get; set; }
         public VariablePersonalData VariablePersonalData { get; set; }
         public PortraitData PortraitData { get; set; }
