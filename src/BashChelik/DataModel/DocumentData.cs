@@ -18,7 +18,7 @@ namespace BashChelik.DataModel
         public string ChipSerialNumber { get; private set; }
         public string DocumentName { get; private set; }
 
-        public static DocumentData CreateFromNativeData(EID_DOCUMENT_DATA nativeData)
+        internal static DocumentData CreateFromNativeData(EID_DOCUMENT_DATA nativeData)
         {
             try
             {
@@ -38,6 +38,22 @@ namespace BashChelik.DataModel
             {
                 throw new InvalidOperationException("Failed to create DocumentData", ex);
             }
+        }
+
+
+        public override string ToString()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"DocumentRegistrationNumber: {DocumentRegistrationNumber}");
+            stringBuilder.AppendLine($"DocumentType: {DocumentType}");
+            stringBuilder.AppendLine($"IssuingDate: {IssuingDate}");
+            stringBuilder.AppendLine($"ExpiryDate: {ExpiryDate}");
+            stringBuilder.AppendLine($"IssuingAuthority: {IssuingAuthority}");
+            stringBuilder.AppendLine($"DocumentSerialNumber: {DocumentSerialNumber}");
+            stringBuilder.AppendLine($"ChipSerialNumber: {ChipSerialNumber}");
+            stringBuilder.AppendLine($"DocumentName: {DocumentName}");
+
+            return stringBuilder.ToString();
         }
     }
 }
