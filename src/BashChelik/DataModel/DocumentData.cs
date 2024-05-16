@@ -18,7 +18,7 @@ namespace BashChelik.DataModel
         public string ChipSerialNumber { get; private set; }
         public string DocumentName { get; private set; }
 
-        internal static DocumentData CreateFromNativeData(EID_DOCUMENT_DATA nativeData)
+        internal static DocumentData CreateFromNativeData(EidDocumentData nativeData)
         {
             try
             {
