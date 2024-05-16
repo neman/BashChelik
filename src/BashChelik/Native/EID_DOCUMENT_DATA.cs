@@ -3,7 +3,7 @@
 namespace BashChelik.Native
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct EID_DOCUMENT_DATA
+    internal struct EID_DOCUMENT_DATA
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_DocRegNo)]
         private readonly byte[] _docRegNo;
