@@ -1,50 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace BashChelik.Native
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct EID_DOCUMENT_DATA
     {
-        /// char[]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_DocRegNo)]
-        public byte[] docRegNo;
+        private readonly byte[] _docRegNo;
 
-        /// int
-        public int docRegNoSize;
+        public byte[] DocRegNo => _docRegNo;
+        public int DocRegNoSize { get; }
 
-        /// char[]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_DocumentType)]
-        public byte[] documentType;
+        private readonly byte[] _documentType;
 
-        /// int
-        public int documentTypeSize;
+        public byte[] DocumentType => _documentType;
+        public int DocumentTypeSize { get; }
 
-        /// char[]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_IssuingDate)]
-        public byte[] issuingDate;
+        private readonly byte[] _issuingDate;
 
-        ///int
-        public int issuingDateSize;
+        public byte[] IssuingDate => _issuingDate;
+        public int IssuingDateSize { get; }
 
-        /// char[]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_ExpiryDate)]
-        public byte[] expiryDate;
+        private readonly byte[] _expiryDate;
 
-        /// int
-        public int expiryDateSize;
+        public byte[] ExpiryDate => _expiryDate;
 
-        /// char[]
+        public int ExpiryDateSize { get; }
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_IssuingAuthority)]
-        public byte[] issuingAuthority;
+        private readonly byte[] _issuingAuthority;
 
-        /// int
-        public int issuingAuthoritySize;             
+        public byte[] IssuingAuthority => _issuingAuthority;
+        public int IssuingAuthoritySize { get; }
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_DocumentSerialNumber)]
+        private readonly byte[] _documentSerialNumber;
+
+        public byte[] DocumentSerialNumber => _documentSerialNumber;
+        public int DocumentSerialNumberSize { get; }
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_ChipSerialNumber)]
+        private readonly byte[] _chipSerialNumber;
+
+        public byte[] ChipSerialNumber => _chipSerialNumber;
+        public int ChipSerialNumberSize { get; }
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NativeConstants.EID_MAX_DocumentName)]
+        public readonly byte[] _documentName;
+
+        public byte[] DocumentName => _documentName;
+        public int DocumentNameSize { get; }
     }
-
-    
 }

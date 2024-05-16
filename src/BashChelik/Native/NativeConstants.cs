@@ -9,13 +9,19 @@ namespace BashChelik.Native
     class NativeConstants
     {
         ///Size of all UTF-8 and binary fields in bytes
+
         #region EID_DOCUMENT_DATA Size
+
         internal const int EID_MAX_DocRegNo = 9;
         internal const int EID_MAX_DocumentType = 2;
         internal const int EID_MAX_IssuingDate = 10;
         internal const int EID_MAX_ExpiryDate = 10;
         internal const int EID_MAX_IssuingAuthority = 100;
-        #endregion
+        internal const int EID_MAX_DocumentSerialNumber = 10;
+        internal const int EID_MAX_ChipSerialNumber = 14;
+        internal const int EID_MAX_DocumentName = 100;
+
+        #endregion EID_DOCUMENT_DATA Size
 
         ///Size of all UTF-8 and binary fields in bytes
         #region EID_FIXED_PERSONAL_DATA Size        
