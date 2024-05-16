@@ -36,5 +36,21 @@ namespace BashChelik.DataModel
             AddressLabel = Encoding.UTF8.GetString(nativeData.addressLabel, 0, nativeData.addressLabelSize);
         }
 
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"State: {State}");
+            sb.AppendLine($"Community: {Community}");
+            sb.AppendLine($"Place: {Place}");
+            sb.AppendLine($"Street: {Street}");
+            sb.AppendLine($"HouseNumber: {HouseNumber}");
+            sb.AppendLine($"HouseLetter: {HouseLetter}");
+            sb.AppendLine($"Entrance: {Entrance}");
+            sb.AppendLine($"Floor: {Floor}");
+            sb.AppendLine($"ApartmentNumber: {ApartmentNumber}");
+            sb.AppendLine($"AddressDate: {AddressDate}");
+            sb.AppendLine($"AddressLabel: {AddressLabel}");
+            return sb.ToString();
+        }
     }
 }

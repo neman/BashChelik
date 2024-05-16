@@ -31,5 +31,20 @@ namespace BashChelik.DataModel
             DateOfBirth = Encoding.UTF8.GetString(nativeData.dateOfBirth, 0, nativeData.dateOfBirthSize);
             CommunityOfBirth = Encoding.UTF8.GetString(nativeData.communityOfBirth, 0, nativeData.communityOfBirthSize);            
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"PersonalNumber: {PersonalNumber}");
+            sb.AppendLine($"Surname: {Surname}");
+            sb.AppendLine($"GivenName: {GivenName}");
+            sb.AppendLine($"ParentGivenName: {ParentGivenName}");
+            sb.AppendLine($"Sex: {Sex}");
+            sb.AppendLine($"PlaceOfBirth: {PlaceOfBirth}");
+            sb.AppendLine($"StateOfBirth: {StateOfBirth}");
+            sb.AppendLine($"DateOfBirth: {DateOfBirth}");
+            sb.AppendLine($"CommunityOfBirth: {CommunityOfBirth}");
+            return sb.ToString();
+        }
     }
 }
