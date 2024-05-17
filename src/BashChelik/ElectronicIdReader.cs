@@ -1,23 +1,13 @@
 ﻿using BashChelik.DataModel;
 using BashChelik.Native;
 using PCSC;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BashChelik
 {
-   
-
     public static class ElectronicIdReader
     {
-       
-
         public static ElectronicIdentificationData ReadAll()
         {
-
             // Create PC/SC context
             string[] readerNames;
             using (var context = new SCardContext())
@@ -32,7 +22,6 @@ namespace BashChelik
                 //TODO:Handle this better, maybe throw custom Exception
                 else return null;
             }
-            
         }
 
         public static ElectronicIdentificationData ReadAll(string readerName, int apiVersion = 4)
@@ -43,7 +32,7 @@ namespace BashChelik
                 AdvancedReader.CheckNativeResult(nativeResult);
                 ElectronicIdentificationData result = new ElectronicIdentificationData();
                 result.CardType = (CardType)cardType;
-                result.Document = advancedReader.ReadDocumentData();                
+                result.Document = advancedReader.ReadDocumentData();
                 result.FixedPersonalData = advancedReader.ReadFixedPersonalData();
                 result.VariablePersonalData = advancedReader.ReadVariablePersonalData();
                 result.PortraitData = advancedReader.ReadPortraitData();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using System;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
@@ -13,8 +14,8 @@ namespace BashChelik.ConsoleApp
             {
                 var data = ElectronicIdReader.ReadAll();
 
-                //Save citizen image from PersonalCard
-                data.PortraitData.Portrait.Save("portrait.png", ImageFormat.Png);
+                //Save citizen image from PersonalCard                
+                data.PortraitData.Portrait.SaveAsPngAsync("portrait.png");
 
                 if (data.CertificateData != null)
                 {
