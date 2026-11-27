@@ -55,10 +55,22 @@ internal static class Probe
         }
 
         if (documentAid is not null)
-            ProbeDocumentFiles(files, documentAid, ct);
+            Guarded("document files", () => ProbeDocumentFiles(files, documentAid, ct));
 
-        ProbeCardEdge(files, ct);
+        Guarded("CardEdge applet", () => ProbeCardEdge(files, ct));
         return 0;
+    }
+
+    private static void Guarded(string part, Action probe)
+    {
+        try
+        {
+            probe();
+        }
+        catch (Exception e) when (e is not DocumentReadException)
+        {
+            Console.WriteLine($"  probe of {part} stopped: {e.GetType().Name}: {e.Message}");
+        }
     }
 
     private static void ProbeDocumentFiles(ChipFileReader files, string aid, CancellationToken ct)
@@ -92,12 +104,59 @@ internal static class Probe
             Console.WriteLine($"\nRecord tags in {fid:X4} (present, no values): {string.Join(", ", RecordTags(content))}");
         }
 
+        var covered = new List<(ushort Fid, string Variant, byte[] Bytes)>();
+        foreach (var fid in Files.Except(SignatureFiles))
+        {
+            files.SelectApplet(Parse(aid), ct);
+            if (!files.Commands.Send(Apdu.SelectFile(fid), ct).IsSuccess)
+                continue;
+            try
+            {
+                files.SelectApplet(Parse(aid), ct);
+                covered.Add((fid, "header + declared length", files.ReadFile(fid, ct).Raw));
+            }
+            catch (DocumentReadException e)
+            {
+                Console.WriteLine($"  {fid:X4}: reading header + declared length stopped: {e.StatusWord:X4}");
+            }
+
+            files.SelectApplet(Parse(aid), ct);
+            covered.Add((fid, "whole file", ReadAllocated(files, fid, ct)));
+        }
+
         foreach (var fid in SignatureFiles)
         {
             files.SelectApplet(Parse(aid), ct);
             Console.WriteLine($"\nSignature file {fid:X4}:");
-            DescribeSignature(files.ReadFile(fid, ct));
+            DescribeSignature(files.ReadFile(fid, ct), covered);
         }
+    }
+
+    private static byte[] ReadAllocated(ChipFileReader files, ushort fid, CancellationToken ct)
+    {
+        files.Commands.SendExpectingSuccess(Apdu.SelectFile(fid), ct);
+        using var raw = new MemoryStream();
+        int le = 255;
+        ushort last = 0x9000;
+        while (raw.Length < 0x7F00)
+        {
+            var chunk = files.Commands.Send(Apdu.ReadBinary((int)raw.Length, (byte)le), ct);
+            last = chunk.StatusWord;
+            if (chunk.Data.Length > 0 && (chunk.IsSuccess || chunk.StatusWord == 0x6282))
+            {
+                raw.Write(chunk.Data);
+                if (!chunk.IsSuccess)
+                    break;
+                continue;
+            }
+
+            if (le == 1)
+                break;
+            le = Math.Max(1, le / 2);
+        }
+
+        Console.WriteLine($"  {fid:X4}: whole file read as {raw.Length} bytes, last status {last:X4}");
+        return raw.ToArray();
     }
 
     private static IEnumerable<int> RecordTags(byte[] content)
@@ -110,7 +169,7 @@ internal static class Probe
         }
     }
 
-    private static void DescribeSignature(ChipFile file)
+    private static void DescribeSignature(ChipFile file, List<(ushort Fid, string Variant, byte[] Bytes)> covered)
     {
         foreach (var skip in new[] { 4, 8, 0 })
         {
@@ -142,47 +201,70 @@ internal static class Probe
                 }
             }
 
-            Console.WriteLine("  signed content (structure; digests shown by length only):");
-            PrintAsn1(new AsnReader(cms.ContentInfo.Content, AsnEncodingRules.BER), 2);
+            DescribeDigests(cms.ContentInfo.Content, covered);
             return;
         }
 
         Console.WriteLine($"  no CMS found; header tag {file.HeaderTag}, length {file.DeclaredLength}, first bytes after header {Hex(file.Raw.Skip(4).Take(8).ToArray())}");
     }
 
-    private static void PrintAsn1(AsnReader reader, int depth)
+    /// <summary>
+    /// Finds where each file's SHA-256 sits in the signed content, without printing any digest.
+    /// What no file explains is printed as offset and length; only short gaps (format bytes) as hex.
+    /// </summary>
+    private static void DescribeDigests(byte[] content, List<(ushort Fid, string Variant, byte[] Bytes)> covered)
     {
-        var indent = new string(' ', depth * 2);
-        while (reader.HasData)
+        Console.WriteLine($"  signed content: {content.Length} bytes");
+        var explained = new bool[content.Length];
+        using var sha = SHA256.Create();
+        foreach (var (fid, variant, bytes) in covered)
         {
-            var tag = reader.PeekTag();
-            if (tag.IsConstructed)
+            var digest = sha.ComputeHash(bytes);
+            var at = IndexOf(content, digest);
+            Console.WriteLine($"    {fid:X4} ({variant}, {bytes.Length} bytes): {(at < 0 ? "not found" : $"digest at offset {at}")}");
+            if (at >= 0)
+                for (int i = at; i < at + digest.Length; i++)
+                    explained[i] = true;
+        }
+
+        for (int slot = 0; slot + 32 <= content.Length; slot += 32)
+        {
+            if (explained[slot])
+                continue;
+            var wanted = content.AsSpan(slot, 32).ToArray();
+            foreach (var (fid, variant, bytes) in covered.Where(c => c.Variant == "whole file"))
+                for (int length = 4; length <= bytes.Length; length++)
+                    if (SHA256.HashData(bytes.AsSpan(0, length)).AsSpan().SequenceEqual(wanted))
+                    {
+                        Console.WriteLine($"    slot at {slot}: the first {length} bytes of {fid:X4}");
+                        for (int i = slot; i < slot + 32; i++)
+                            explained[i] = true;
+                    }
+        }
+
+        for (int i = 0; i < content.Length;)
+        {
+            if (explained[i])
             {
-                Console.WriteLine($"{indent}{Name(tag)} {{");
-                var inner = tag.TagClass == TagClass.Universal && tag.TagValue == 17
-                    ? reader.ReadSetOf(tag)
-                    : reader.ReadSequence(tag);
-                PrintAsn1(inner, depth + 1);
-                Console.WriteLine($"{indent}}}");
+                i++;
+                continue;
             }
-            else if (tag.HasSameClassAndValue(Asn1Tag.Integer))
-            {
-                Console.WriteLine($"{indent}INTEGER {reader.ReadInteger()}");
-            }
-            else if (tag.HasSameClassAndValue(Asn1Tag.ObjectIdentifier))
-            {
-                Console.WriteLine($"{indent}OID {reader.ReadObjectIdentifier()}");
-            }
-            else
-            {
-                var value = reader.ReadEncodedValue();
-                Console.WriteLine($"{indent}{Name(tag)} ({value.Length} bytes encoded)");
-            }
+
+            int start = i;
+            while (i < content.Length && !explained[i])
+                i++;
+            var gap = content.Skip(start).Take(i - start).ToArray();
+            Console.WriteLine($"    unexplained at {start}, {gap.Length} bytes{(gap.Length <= 8 ? ": " + Hex(gap) : "")}");
         }
     }
 
-    private static string Name(Asn1Tag tag) =>
-        tag.TagClass == TagClass.Universal ? ((UniversalTagNumber)tag.TagValue).ToString() : $"[{tag.TagClass} {tag.TagValue}]";
+    private static int IndexOf(byte[] haystack, byte[] needle)
+    {
+        for (int i = 0; i + needle.Length <= haystack.Length; i++)
+            if (haystack.AsSpan(i, needle.Length).SequenceEqual(needle))
+                return i;
+        return -1;
+    }
 
     private static void ProbeCardEdge(ChipFileReader files, CancellationToken ct)
     {
@@ -218,7 +300,17 @@ internal static class Probe
         {
             if (length is < 100 or > 8000)
                 continue;
-            var bytes = ReadPlain(files, 2 + length, ct).Skip(2).ToArray();
+            byte[] bytes;
+            try
+            {
+                bytes = ReadPlain(files, 2 + length, ct).Skip(2).ToArray();
+            }
+            catch (DocumentReadException e)
+            {
+                Console.WriteLine($"    reading {2 + length} bytes stopped: {e.StatusWord:X4}");
+                continue;
+            }
+
             try
             {
                 var der = bytes[0] == 0x01 && bytes[1] == 0x00 ? Inflate(bytes.Skip(4).ToArray()) : bytes;
