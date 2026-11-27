@@ -24,6 +24,7 @@ internal static class Program
             return command switch
             {
                 "probe" => Probe.Run(readerName!),
+                "read" => Read.Run(readerName!),
                 _ => Usage(),
             };
         }
