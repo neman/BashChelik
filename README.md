@@ -38,6 +38,10 @@ A document that cannot be read throws `DocumentReadException`, whose `Reason` sa
 
 Dates are `DateTime?` with no time, and `null` when the document does not carry them. The date of birth is a `BirthDate`, which keeps the year when the day or month is unknown. The portrait is the JPEG stored on the chip; decode it with the image library you already use.
 
+## Testing with a real card
+
+The automatic tests use a simulated chip. How to read a real document by hand on Windows and on Linux under WSL 2 is in [`docs/manual-testing.md`](docs/manual-testing.md).
+
 ## Version 3
 
 Versions 1 and 2 wrapped the Ministry's CelikAPI DLL and were never published as a package. Version 3 is a new library with a new API.
