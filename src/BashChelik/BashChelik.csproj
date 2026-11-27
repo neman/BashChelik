@@ -5,7 +5,19 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>BashChelik</RootNamespace>
+    <PackageId>BashChelik</PackageId>
+    <Version>3.0.0</Version>
+    <Authors>neman</Authors>
+    <Description>Reads Serbian identity cards, foreigner identity cards and residence permits from their chip through any PC/SC card reader, on Windows, Linux and macOS, without the Ministry of Interior's CelikAPI.</Description>
+    <PackageTags>serbia;eid;identity-card;licna-karta;smart-card;pcsc</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/neman/BashChelik</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/neman/BashChelik</PackageProjectUrl>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="PCSC" Version="6.2.0" />
   </ItemGroup>
