@@ -36,6 +36,7 @@ internal sealed class InventedDocument
             [0x0F04] = File(0x0F04, 1568, 1581),
             [0x0F06] = ChipFileBuilder.Raw(0x0F06, new byte[] { 0x46, 0x06, (byte)Jpeg.Length, (byte)(Jpeg.Length >> 8) }.Concat(Jpeg).ToArray()),
         },
+        [InventedCertificates.CardEdgeAid] = InventedCertificates.CardEdgeFiles(),
     };
 
     public CardSimulator Card() => new(Atr, Applets);

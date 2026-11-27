@@ -71,6 +71,10 @@ public sealed class DocumentReader : IDisposable
     public Portrait ReadPortrait(CancellationToken ct = default) =>
         InTransaction(ct, () => PortraitLayout.Read(_files.ReadFile(PortraitLayout.Fid, ct)));
 
+    /// <summary>Reads the holder's certificates; no PIN is needed.</summary>
+    public IReadOnlyList<HolderCertificate> ReadCertificates(CancellationToken ct = default) =>
+        InTransaction(ct, () => CardEdge.ReadCertificates(_files, ct));
+
     /// <summary>Reads everything in one transaction, keeping the chip files for verification.</summary>
     public IdentityDocument ReadDocument(CancellationToken ct = default) => InTransaction(ct, () =>
     {
@@ -78,6 +82,7 @@ public sealed class DocumentReader : IDisposable
         var personalFile = _files.ReadFile(PersonalDataLayout.Fid, ct);
         var addressFile = _files.ReadFile(AddressLayout.Fid, ct);
         var portraitFile = _files.ReadFile(PortraitLayout.Fid, ct);
+        var certificates = CardEdge.ReadCertificates(_files, ct);
 
         return new IdentityDocument(
             Kind,
@@ -85,7 +90,7 @@ public sealed class DocumentReader : IDisposable
             PersonalDataLayout.Read(TagRecords.Parse(personalFile.Content), Kind),
             AddressLayout.Read(TagRecords.Parse(addressFile.Content)),
             PortraitLayout.Read(portraitFile),
-            Array.Empty<HolderCertificate>())
+            certificates)
         {
             Evidence = new Dictionary<ushort, byte[]>
             {

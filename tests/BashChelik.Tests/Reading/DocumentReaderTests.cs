@@ -46,6 +46,28 @@ public class DocumentReaderTests
     }
 
     [Fact]
+    public void ReadDocument_includes_the_holder_certificates()
+    {
+        using var reader = DocumentReader.Open(InventedDocuments.IdentityCard().Card(), TestContext.Current.CancellationToken);
+
+        var document = reader.ReadDocument(TestContext.Current.CancellationToken);
+
+        Assert.Equal(
+            new[] { InventedCertificates.Authentication.Thumbprint, InventedCertificates.Signing.Thumbprint },
+            document.HolderCertificates.Select(c => c.Certificate.Thumbprint));
+    }
+
+    [Fact]
+    public void ReadCertificates_returns_them_with_their_purpose()
+    {
+        using var reader = DocumentReader.Open(InventedDocuments.ResidencePermit().Card(), TestContext.Current.CancellationToken);
+
+        var certificates = reader.ReadCertificates(TestContext.Current.CancellationToken);
+
+        Assert.Equal(new[] { CertificatePurpose.Authentication, CertificatePurpose.Signing }, certificates.Select(c => c.Purpose));
+    }
+
+    [Fact]
     public void Each_part_can_be_read_on_its_own()
     {
         using var reader = DocumentReader.Open(InventedDocuments.ForeignerIdentityCard().Card(), TestContext.Current.CancellationToken);
