@@ -8,7 +8,7 @@
     <PackageId>BashChelik</PackageId>
     <Version>3.0.0</Version>
     <Authors>neman</Authors>
-    <Description>Reads Serbian identity cards, foreigner identity cards and residence permits from their chip through a PC/SC card reader, without the Ministry of Interior's CelikAPI. Built for Windows, Linux and macOS; reading a card has been tried on Windows.</Description>
+    <Description>Reads Serbian identity cards, foreigner identity cards and residence permits from their chip through a PC/SC card reader, without the Ministry of Interior's CelikAPI. Built for Windows, Linux and macOS; reading a card has been tried on Windows and Linux.</Description>
     <PackageTags>serbia;eid;identity-card;licna-karta;smart-card;pcsc</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
