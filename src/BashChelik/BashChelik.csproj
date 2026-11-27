@@ -1,19 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyTitle>BashChelik</AssemblyTitle>
-    <Product>BashChelik</Product>
-    <Copyright>Copyright © 2015 - $([System.DateTime]::Now.Year)</Copyright>    
-    <FileVersion>2.0.0</FileVersion>
-	<Version>2.0.0</Version>
-    <ProductVersion>2.0.0</ProductVersion>
+    <TargetFrameworks>net11.0;netstandard2.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>BashChelik</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="PCSC" Version="6.2.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />	
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="BashChelik.Tests" />
   </ItemGroup>
 </Project>

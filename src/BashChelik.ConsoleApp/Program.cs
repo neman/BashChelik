@@ -1,45 +1,16 @@
-﻿using SixLabors.ImageSharp;
 using System;
-using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.IO;
 
-namespace BashChelik.ConsoleApp
+namespace BashChelik.ConsoleApp;
+
+/// <summary>Manual test tool: reads a document from a card reader and prints it on screen.</summary>
+internal static class Program
 {
-    internal class Program
+    private static int Main(string[] args)
     {
-        private static void Main(string[] args)
-        {
-            try
-            {
-                var data = ElectronicIdReader.ReadAll();
-
-                //Save citizen image from PersonalCard                
-                data.PortraitData.Portrait.SaveAsPngAsync("portrait.png");
-
-                if (data.CertificateData != null)
-                {
-                    File.WriteAllBytes("certificate.cer", data.CertificateData.Certificate);
-                }
-
-                Console.WriteLine("Card Type: " + data.CardType);
-                
-                Console.OutputEncoding = System.Text.Encoding.UTF8;
-                Console.WriteLine($"Document Data: {data.Document}");
-                Console.WriteLine($"Fixed Personal Data: {data.FixedPersonalData}");
-                Console.WriteLine($"Variable Personal Data: {data.VariablePersonalData}");
-
-
-
-                Console.WriteLine("Data loaded successfully");
-            }
-            catch (Exception ex)
-            {
-                //TODO:Add trace listener to Config file
-                Trace.TraceError(ex.ToString());
-                Console.WriteLine(string.Concat("Failed to load data: ", ex.ToString()));
-                Console.ReadLine();
-            }
-        }
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        Console.WriteLine("Usage:");
+        Console.WriteLine("  read [reader]    print the document in the reader");
+        Console.WriteLine("  probe [reader]   print the structure of the chip, without any value");
+        return 1;
     }
 }
