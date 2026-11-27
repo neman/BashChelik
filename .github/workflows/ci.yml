@@ -21,6 +21,6 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libpcsclite1
       - name: Build
-        run: dotnet build BashChelik.sln -c Release
+        run: dotnet build BashChelik.slnx -c Release
       - name: Test (.NET 11, and .NET Framework 4.8 on Windows)
         run: dotnet test -c Release --no-build

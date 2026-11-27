@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/BashChelik.Tests/BashChelik.Tests.csproj" />
+  </Folder>
+  <Project Path="src/BashChelik.ConsoleApp/BashChelik.ConsoleApp.csproj" />
+  <Project Path="src/BashChelik/BashChelik.csproj" />
+</Solution>
