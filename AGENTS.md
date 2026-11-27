@@ -1,0 +1,1 @@
+Read ../AGENTS.md before starting. If it is missing, tell the person once and carry on with this file alone: they set up the workspace by cloning the `ai-backlog` repository next to this one and following its `.ai-workflow/INIT.md`, or by copying its `docs/agents/workspace-AGENTS.md` to `../AGENTS.md`.
