@@ -3,7 +3,7 @@
 Reads Serbian electronic identity documents from their chip through any PC/SC card reader: the document data, the holder's personal data and address, the portrait and the holder's certificates.
 
 - Documents: identity card (lična karta), foreigner identity card (lična karta za strance), residence permit (boravišna dozvola). Identity cards issued before August 2014 have all expired and are not supported.
-- Platforms: Windows, Linux (pcsc-lite) and macOS; .NET 11, .NET 10 and .NET Framework 4.7.2 or newer (through .NET Standard 2.0; tested on 4.8).
+- Platforms: .NET 11, .NET 10 and .NET Framework 4.7.2 or newer (through .NET Standard 2.0; tested on 4.8). Reading a card has been tried on Windows. On Linux (with pcsc-lite) and macOS the library builds and its tests pass, but reading a real card has not been tried yet.
 - No Ministry of Interior DLL: the library talks to the chip itself.
 
 ## Install
