@@ -11,5 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="BashChelik.Tests" />
+    <InternalsVisibleTo Include="BashChelik.ConsoleApp" />
   </ItemGroup>
 </Project>

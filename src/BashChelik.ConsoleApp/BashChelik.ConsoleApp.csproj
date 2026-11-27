@@ -8,4 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BashChelik\BashChelik.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
+  </ItemGroup>
 </Project>
