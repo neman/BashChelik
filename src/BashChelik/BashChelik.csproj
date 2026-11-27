@@ -19,7 +19,7 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="PCSC" Version="6.2.0" />
+    <PackageReference Include="PCSC" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="BashChelik.Tests" />
