@@ -1,12 +1,16 @@
 using System;
+using System.IO;
 using System.Linq;
 
 namespace BashChelik.ConsoleApp;
 
-/// <summary>Reads the document in a reader through the public API and prints it on screen; nothing is written to disk.</summary>
+/// <summary>
+/// Reads the document in a reader through the public API and prints it on screen.
+/// Nothing is written to disk unless a portrait path is given; then only the photo is saved there.
+/// </summary>
 internal static class Read
 {
-    public static int Run(string readerName)
+    public static int Run(string readerName, string? portraitPath)
     {
         var document = DocumentReader.ReadAll(readerName);
         var data = document.DocumentData;
@@ -60,7 +64,14 @@ internal static class Read
         Field("Label", address.Label);
 
         Section("Portrait");
-        Field("JPEG bytes", document.Portrait.ToJpeg().Length.ToString());
+        var jpeg = document.Portrait.ToJpeg();
+        Field("JPEG bytes", jpeg.Length.ToString());
+        if (portraitPath is not null)
+        {
+            var path = Path.GetFullPath(portraitPath);
+            File.WriteAllBytes(path, jpeg);
+            Field("Saved to", path);
+        }
 
         Section("Holder certificates");
         foreach (var certificate in document.HolderCertificates)
