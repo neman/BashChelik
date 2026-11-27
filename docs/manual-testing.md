@@ -14,7 +14,7 @@ dotnet run --project src/BashChelik.ConsoleApp -c Release -- read
 
 - `read` prints the document through the public API. Compare it with the printed document, especially letters such as `Ž`, `Ć` and `Đ`, and the dates.
 - Run it once more and pull the card out while it reads: it must end with `CardRemoved`, not a crash.
-- `read --portrait <file.jpg>` also saves the photo, to look at it. Save it outside the repository, for example `C:Tempportrait.jpg` or `/tmp/portrait.jpg`; `*.jpg` is ignored by git all the same.
+- `read --portrait <file.jpg>` also saves the photo, to look at it. Save it outside the repository, for example `C:\Temp\portrait.jpg` or `/tmp/portrait.jpg`; `*.jpg` is ignored by git all the same.
 - `probe` prints only the chip's structure, without any value from the document. It is for checking the chip format.
 - Both take an optional reader name; without one they use the first reader.
 
