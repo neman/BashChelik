@@ -21,9 +21,9 @@ dotnet run --project src/BashChelik.ConsoleApp -c Release -- read
 
 Nothing to install beyond the .NET 11 SDK; Windows has PC/SC built in. Run the tool as above.
 
-## Linux under WSL 2 (Windows 11)
+## Ubuntu on Windows (WSL 2)
 
-Tried on Ubuntu under WSL 2 with a Gemplus USB reader. The reader is passed from Windows into WSL with usbipd-win; while it is attached to WSL, Windows does not see it.
+Tried on Ubuntu running on Windows 11 under WSL 2, with a Gemplus USB reader. Linux installed directly on a computer has not been tried; there the reader is plugged in directly and the usbipd steps are skipped. The reader is passed from Windows into WSL with usbipd-win; while it is attached to WSL, Windows does not see it.
 
 ### Once, in Windows (PowerShell as administrator)
 
