@@ -20,10 +20,18 @@ public class ChipFileReaderTests
         new(new CardCommands(new CardSimulator(new byte[] { 0x3B },
             new Dictionary<string, Dictionary<ushort, byte[]>> { [IdentityCardAid] = files })));
 
-    [Fact]
-    public void ReadFile_returns_header_and_content()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(251)]
+    [InlineData(255)]
+    [InlineData(256)]
+    [InlineData(300)]
+    [InlineData(510)]
+    [InlineData(511)]
+    public void ReadFile_returns_header_and_content(int length)
     {
-        var stored = FileWithContent(300);
+        var stored = FileWithContent(length);
         var reader = Reader(new() { [0x0F02] = stored });
         reader.SelectApplet(Hex.Parse(IdentityCardAid), TestContext.Current.CancellationToken);
 
@@ -31,7 +39,8 @@ public class ChipFileReaderTests
 
         Assert.Equal((ushort)0x0F02, file.Fid);
         Assert.Equal((ushort)0x0F02, file.HeaderTag);
-        Assert.Equal(300, file.DeclaredLength);
+        Assert.Equal(length, file.DeclaredLength);
+        Assert.Equal(4 + length, file.Raw.Length);
         Assert.Equal(stored, file.Raw);
         Assert.Equal(stored.Skip(4), file.Content);
     }

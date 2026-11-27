@@ -25,7 +25,7 @@ internal sealed class CardSimulator : ICardChannel
 
     public byte[] Atr { get; }
 
-    /// <summary>Answer like a T=0 reader: <c>61xx</c> before data, <c>6Cxx</c> when Le is too long.</summary>
+    /// <summary>Answer like a T=0 reader: <c>61xx</c> before data, <c>6Cxx</c> when Le is too long (otherwise <c>6700</c>, as the real chip does).</summary>
     public bool T0Mode { get; set; }
 
     public List<byte[]> Commands { get; } = new();
@@ -100,10 +100,10 @@ internal sealed class CardSimulator : ICardChannel
 
         int available = Math.Min(le, _file.Length - offset);
         var data = _file.Skip(offset).Take(available).ToArray();
+        if (available < le)
+            return Status(T0Mode ? (ushort)(0x6C00 | available) : (ushort)0x6700);
         if (!T0Mode)
             return new ResponseApdu(data, 0x9000);
-        if (available < le)
-            return Status((ushort)(0x6C00 | available));
         _pendingResponse = data;
         return Status((ushort)(0x6100 | (data.Length & 0xFF)));
     }
