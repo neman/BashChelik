@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
@@ -35,13 +36,29 @@ internal static class CardEdge
                 continue;
 
             int length = start.Data[0] | (start.Data[1] << 8);
-            var body = ReadExactly(files.Commands, 2, length, ct);
-            var der = body[0] == 0x01 && body[1] == 0x00 ? Zlib.Inflate(body.Skip(4).ToArray()) : body;
-            var certificate = Load(der);
-            certificates.Add(new HolderCertificate(PurposeOf(certificate), certificate));
+            certificates.Add(ReadCertificate(files.Commands, fid, length, ct));
         }
 
         return certificates;
+    }
+
+    private static HolderCertificate ReadCertificate(CardCommands commands, ushort fid, int length, CancellationToken ct)
+    {
+        try
+        {
+            if (length < 4)
+                throw new InvalidDataException("too short");
+            var body = ReadExactly(commands, 2, length, ct);
+            var der = body[0] == 0x01 && body[1] == 0x00 ? Zlib.Inflate(body.Skip(4).ToArray()) : body;
+            if (der.Length == 0)
+                throw new InvalidDataException("empty");
+            var certificate = Load(der);
+            return new HolderCertificate(PurposeOf(certificate), certificate);
+        }
+        catch (Exception e) when (e is InvalidDataException or CryptographicException or ArgumentException or IndexOutOfRangeException)
+        {
+            throw new DocumentReadException(DocumentReadFailure.ChipError, $"File {fid:X4} in the certificate applet is not a readable certificate.", innerException: e);
+        }
     }
 
     private static bool LooksLikeCertificate(byte[] start) =>
