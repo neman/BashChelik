@@ -201,3 +201,6 @@ FakesAssemblies/
 
 # Scratch workspace of agent sessions (plans, ledgers, review packages)
 .superpowers/
+
+# Results of dotnet test (Microsoft Testing Platform)
+TestResults/
