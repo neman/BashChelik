@@ -1,19 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyTitle>BashChelik</AssemblyTitle>
-    <Product>BashChelik</Product>
-    <Copyright>Copyright © 2015 - $([System.DateTime]::Now.Year)</Copyright>    
-    <FileVersion>2.0.0</FileVersion>
-	<Version>2.0.0</Version>
-    <ProductVersion>2.0.0</ProductVersion>
+    <TargetFrameworks>net11.0;netstandard2.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>BashChelik</RootNamespace>
+    <PackageId>BashChelik</PackageId>
+    <Version>3.0.0</Version>
+    <Authors>neman</Authors>
+    <Description>Reads Serbian identity cards, foreigner identity cards and residence permits from their chip through a PC/SC card reader, without the Ministry of Interior's CelikAPI. Built for Windows, Linux and macOS; reading a card has been tried on Windows and on Ubuntu under WSL 2.</Description>
+    <PackageTags>serbia;eid;identity-card;licna-karta;smart-card;pcsc</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/neman/BashChelik</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/neman/BashChelik</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="PCSC" Version="6.2.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />	
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="PCSC" Version="7.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="BashChelik.Tests" />
+    <InternalsVisibleTo Include="BashChelik.ConsoleApp" />
   </ItemGroup>
 </Project>

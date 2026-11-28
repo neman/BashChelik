@@ -198,3 +198,9 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
+# Scratch workspace of agent sessions (plans, ledgers, review packages)
+.superpowers/
+
+# Results of dotnet test (Microsoft Testing Platform)
+TestResults/
