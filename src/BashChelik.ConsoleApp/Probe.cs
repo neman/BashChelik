@@ -99,9 +99,8 @@ internal static class Probe
 
         foreach (var fid in RecordFiles)
         {
-            files.SelectApplet(Parse(aid), ct);
-            var content = files.ReadFile(fid, ct).Content;
-            Console.WriteLine($"\nRecord tags in {fid:X4} (present, no values): {string.Join(", ", RecordTags(content))}");
+            if (TryReadProbeFile(files, aid, fid, ct) is { } file)
+                Console.WriteLine($"\nRecord tags in {fid:X4} (present, no values): {string.Join(", ", RecordTags(file.Content))}");
         }
 
         var covered = new List<(ushort Fid, string Variant, byte[] Bytes)>();
@@ -110,25 +109,39 @@ internal static class Probe
             files.SelectApplet(Parse(aid), ct);
             if (!files.Commands.Send(Apdu.SelectFile(fid), ct).IsSuccess)
                 continue;
+            if (TryReadProbeFile(files, aid, fid, ct) is { } file)
+                covered.Add((fid, "header + declared length", file.Raw));
+
             try
             {
                 files.SelectApplet(Parse(aid), ct);
-                covered.Add((fid, "header + declared length", files.ReadFile(fid, ct).Raw));
+                covered.Add((fid, "whole file", ReadAllocated(files, fid, ct)));
             }
-            catch (DocumentReadException e)
+            catch (DocumentReadException e) when (e.Reason == DocumentReadFailure.ChipError)
             {
-                Console.WriteLine($"  {fid:X4}: reading header + declared length stopped: {e.StatusWord:X4}");
+                Console.WriteLine($"  {fid:X4}: reading whole file stopped: {e.Message}");
             }
-
-            files.SelectApplet(Parse(aid), ct);
-            covered.Add((fid, "whole file", ReadAllocated(files, fid, ct)));
         }
 
         foreach (var fid in SignatureFiles)
         {
-            files.SelectApplet(Parse(aid), ct);
             Console.WriteLine($"\nSignature file {fid:X4}:");
-            DescribeSignature(files.ReadFile(fid, ct), covered);
+            if (TryReadProbeFile(files, aid, fid, ct) is { } file)
+                DescribeSignature(file, covered);
+        }
+    }
+
+    private static ChipFile? TryReadProbeFile(ChipFileReader files, string aid, ushort fid, CancellationToken ct)
+    {
+        try
+        {
+            files.SelectApplet(Parse(aid), ct);
+            return files.ReadFile(fid, ct);
+        }
+        catch (DocumentReadException e) when (e.Reason == DocumentReadFailure.ChipError)
+        {
+            Console.WriteLine($"  {fid:X4}: reading header + declared length stopped: {e.Message}");
+            return null;
         }
     }
 

@@ -29,6 +29,7 @@ public class ChipFileReaderTests
     [InlineData(300)]
     [InlineData(510)]
     [InlineData(511)]
+    [InlineData(0x8000 - 4)]
     public void ReadFile_returns_header_and_content(int length)
     {
         var stored = FileWithContent(length);
@@ -43,6 +44,18 @@ public class ChipFileReaderTests
         Assert.Equal(4 + length, file.Raw.Length);
         Assert.Equal(stored, file.Raw);
         Assert.Equal(stored.Skip(4), file.Content);
+    }
+
+    [Fact]
+    public void ReadFile_rejects_a_declared_length_outside_the_address_range()
+    {
+        var reader = Reader(new() { [0x0F02] = new byte[] { 0x02, 0x0F, 0xFD, 0x7F } });
+        reader.SelectApplet(Hex.Parse(IdentityCardAid), TestContext.Current.CancellationToken);
+
+        var error = Assert.Throws<DocumentReadException>(() => reader.ReadFile(0x0F02, TestContext.Current.CancellationToken));
+
+        Assert.Equal(DocumentReadFailure.ChipError, error.Reason);
+        Assert.Contains("address range", error.Message);
     }
 
     [Fact]

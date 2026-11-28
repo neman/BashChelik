@@ -8,9 +8,6 @@
 *.sln.docstates
 # png file from smart card, created by sample
 *.png
-# portrait saved by the console tool (read --portrait)
-*.jpg
-*.jpeg
 # certificate file from smart card, created by sample 
 *.cer
 

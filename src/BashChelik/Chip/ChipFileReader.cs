@@ -26,6 +26,9 @@ internal sealed class ChipFileReader(CardCommands commands)
             throw new DocumentReadException(DocumentReadFailure.ChipError, $"File {fid:X4} has no header.");
 
         int total = HeaderLength + (header[2] | (header[3] << 8));
+        if (total > Apdu.MaxBinaryFileLength)
+            throw new DocumentReadException(DocumentReadFailure.ChipError, $"File {fid:X4} exceeds the READ BINARY address range.");
+
         using var raw = new MemoryStream(total);
         raw.Write(header, 0, HeaderLength);
         while (raw.Length < total)

@@ -29,7 +29,7 @@ internal sealed class PcscCardChannel : ICardChannel
             using var context = ContextFactory.Instance.Establish(SCardScope.System);
             return context.GetReaders() ?? Array.Empty<string>();
         }
-        catch (Exception e) when (e is NoReadersAvailableException or NoServiceException)
+        catch (Exception e) when (e is NoReadersAvailableException or NoServiceException || IsPcscUnavailable(e))
         {
             return Array.Empty<string>();
         }
@@ -46,7 +46,7 @@ internal sealed class PcscCardChannel : ICardChannel
             reader = context.ConnectReader(readerName, SCardShareMode.Shared, SCardProtocol.Any);
             return new PcscCardChannel(context, reader, readerName, reader.GetAttrib(SCardAttribute.AtrString));
         }
-        catch (Exception e) when (e is PCSCException)
+        catch (Exception e) when (e is PCSCException || IsPcscUnavailable(e))
         {
             reader?.Dispose();
             context?.Dispose();
@@ -105,6 +105,8 @@ internal sealed class PcscCardChannel : ICardChannel
     /// </summary>
     internal static Exception Translate(Exception e, string readerName, bool connected) => e switch
     {
+        _ when IsPcscUnavailable(e) =>
+            new DocumentReadException(DocumentReadFailure.NoReader, "The PC/SC library is not available.", innerException: e),
         NoServiceException or NoReadersAvailableException or UnknownReaderException when !connected =>
             new DocumentReadException(DocumentReadFailure.NoReader, $"No card reader named \"{readerName}\" is connected.", innerException: e),
         ReaderUnavailableException when !connected =>
@@ -119,4 +121,7 @@ internal sealed class PcscCardChannel : ICardChannel
             new DocumentReadException(DocumentReadFailure.ChipError, $"The card reader reported {pcsc.SCardError}.", innerException: e),
         _ => e,
     };
+
+    private static bool IsPcscUnavailable(Exception e) =>
+        e is DllNotFoundException or TypeInitializationException;
 }

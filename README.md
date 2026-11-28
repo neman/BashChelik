@@ -17,13 +17,20 @@ dotnet add package BashChelik
 ```csharp
 using BashChelik;
 
-var readerName = DocumentReader.ListReaders()[0];
+var readers = DocumentReader.ListReaders();
+if (readers.Length == 0)
+{
+    Console.Error.WriteLine("No card reader is available.");
+    return;
+}
+
+var readerName = readers[0];
 IdentityDocument document = DocumentReader.ReadAll(readerName);
 
 Console.WriteLine($"{document.PersonalData.GivenName} {document.PersonalData.Surname}");
 Console.WriteLine($"Personal number valid: {document.PersonalData.PersonalNumber?.HasValidChecksum}");
 Console.WriteLine($"Document valid today: {document.IsValidOn(DateTime.Today)}");
-File.WriteAllBytes("portrait.jpg", document.Portrait.ToJpeg());
+File.WriteAllBytes(Path.Combine(Path.GetTempPath(), "portrait.jpg"), document.Portrait.ToJpeg());
 ```
 
 To read only some parts, open the document and read what you need:

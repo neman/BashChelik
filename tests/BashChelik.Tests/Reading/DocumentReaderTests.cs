@@ -45,13 +45,22 @@ public class DocumentReaderTests
             Assert.Equal(files[fid], document.Evidence[fid]);
     }
 
-    [Fact]
-    public void ReadDocument_includes_the_holder_certificates()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ReadDocument_includes_readable_certificates_and_document_data(bool hasUnreadableFile)
     {
-        using var reader = DocumentReader.Open(InventedDocuments.IdentityCard().Card(), TestContext.Current.CancellationToken);
+        var invented = InventedDocuments.IdentityCard();
+        if (hasUnreadableFile)
+            invented.Applets[InventedCertificates.CardEdgeAid][0x7101] = new byte[] { 0x04, 0x00, 0x30, 0x82, 0x01, 0x02 };
+        using var reader = DocumentReader.Open(invented.Card(), TestContext.Current.CancellationToken);
 
         var document = reader.ReadDocument(TestContext.Current.CancellationToken);
 
+        Assert.Equal("012345678", document.DocumentData.Number);
+        Assert.Equal("Ćirić", document.PersonalData.Surname);
+        Assert.Equal("Njegoševa", document.Address.Street);
+        Assert.Equal(InventedDocuments.FakeJpeg, document.Portrait.ToJpeg());
         Assert.Equal(
             new[] { InventedCertificates.Authentication.Thumbprint, InventedCertificates.Signing.Thumbprint },
             document.HolderCertificates.Select(c => c.Certificate.Thumbprint));

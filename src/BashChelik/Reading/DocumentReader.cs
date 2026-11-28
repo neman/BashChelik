@@ -71,7 +71,7 @@ public sealed class DocumentReader : IDisposable
     public Portrait ReadPortrait(CancellationToken ct = default) =>
         InTransaction(ct, () => PortraitLayout.Read(_files.ReadFile(PortraitLayout.Fid, ct)));
 
-    /// <summary>Reads the holder's certificates; no PIN is needed.</summary>
+    /// <summary>Reads the holder's certificates without a PIN, skipping unreadable certificate files.</summary>
     public IReadOnlyList<HolderCertificate> ReadCertificates(CancellationToken ct = default) =>
         InTransaction(ct, () => CardEdge.ReadCertificates(_files, ct));
 

@@ -34,15 +34,18 @@ public class CardEdgeTests
     [InlineData(new byte[] { 0x06, 0x00, 0x01, 0x00, 0x05, 0x00, 0x78, 0x9C })]
     [InlineData(new byte[] { 0x01, 0x00, 0x30, 0x00 })]
     [InlineData(new byte[] { 0x04, 0x00, 0x30, 0x82, 0x01, 0x02 })]
-    public void A_file_shaped_like_a_certificate_that_is_not_one_is_a_chip_error(byte[] decoy)
+    [InlineData(new byte[] { 0x08, 0x00, 0x30, 0x00 })]
+    [InlineData(new byte[] { 0xFF, 0xFF, 0x30, 0x00 })]
+    public void An_unreadable_certificate_file_is_skipped(byte[] decoy)
     {
         var files = InventedCertificates.CardEdgeFiles();
-        files[0x7104] = decoy;
+        files[0x7101] = decoy;
 
-        var error = Assert.Throws<DocumentReadException>(() => CardEdge.ReadCertificates(Card(files), TestContext.Current.CancellationToken));
+        var certificates = CardEdge.ReadCertificates(Card(files), TestContext.Current.CancellationToken);
 
-        Assert.Equal(DocumentReadFailure.ChipError, error.Reason);
-        Assert.Contains("7104", error.Message);
+        Assert.Equal(
+            new[] { InventedCertificates.Authentication.Thumbprint, InventedCertificates.Signing.Thumbprint },
+            certificates.Select(c => c.Certificate.Thumbprint));
     }
 
     [Fact]

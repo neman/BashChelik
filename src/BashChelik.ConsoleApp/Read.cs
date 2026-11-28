@@ -66,11 +66,20 @@ internal static class Read
         Section("Portrait");
         var jpeg = document.Portrait.ToJpeg();
         Field("JPEG bytes", jpeg.Length.ToString());
+        var exitCode = 0;
         if (portraitPath is not null)
         {
-            var path = Path.GetFullPath(portraitPath);
-            File.WriteAllBytes(path, jpeg);
-            Field("Saved to", path);
+            try
+            {
+                var path = Path.GetFullPath(portraitPath);
+                File.WriteAllBytes(path, jpeg);
+                Field("Saved to", path);
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+            {
+                Console.Error.WriteLine($"Could not save the portrait. {e.Message}");
+                exitCode = 4;
+            }
         }
 
         Section("Holder certificates");
@@ -79,7 +88,7 @@ internal static class Read
         if (!document.HolderCertificates.Any())
             Console.WriteLine("  none");
 
-        return 0;
+        return exitCode;
     }
 
     private static void Section(string name) => Console.WriteLine($"\n{name}:");

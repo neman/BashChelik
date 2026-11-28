@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading;
 
 namespace BashChelik.Chip;
@@ -10,19 +11,19 @@ internal sealed class CardCommands(ICardChannel channel)
     /// <summary>Sends a command and returns the final response, whatever its status word.</summary>
     public ResponseApdu Send(byte[] command, CancellationToken ct)
     {
-        var response = Transmit(command, ct);
+        var response = TransmitWithLengthCorrection(command, ct);
+        if (response.StatusWord >> 8 != 0x61)
+            return response;
 
-        if (response.StatusWord >> 8 == 0x6C)
+        using var data = new MemoryStream();
+        while (response.StatusWord >> 8 == 0x61)
         {
-            var resent = (byte[])command.Clone();
-            resent[resent.Length - 1] = (byte)response.StatusWord;
-            response = Transmit(resent, ct);
+            data.Write(response.Data, 0, response.Data.Length);
+            response = TransmitWithLengthCorrection(Apdu.GetResponse((byte)response.StatusWord), ct);
         }
 
-        while (response.StatusWord >> 8 == 0x61)
-            response = Transmit(Apdu.GetResponse((byte)response.StatusWord), ct);
-
-        return response;
+        data.Write(response.Data, 0, response.Data.Length);
+        return new ResponseApdu(data.ToArray(), response.StatusWord);
     }
 
     /// <summary>Sends a command and returns its data, or throws <see cref="DocumentReadFailure.ChipError"/>.</summary>
@@ -35,6 +36,18 @@ internal sealed class CardCommands(ICardChannel channel)
                 $"The chip answered {response.StatusWord:X4}.",
                 response.StatusWord);
         return response.Data;
+    }
+
+    private ResponseApdu TransmitWithLengthCorrection(byte[] command, CancellationToken ct)
+    {
+        var response = Transmit(command, ct);
+        // Only the five-byte READ BINARY and GET RESPONSE commands carry Le.
+        if (response.StatusWord >> 8 != 0x6C || command.Length != 5)
+            return response;
+
+        var corrected = (byte[])command.Clone();
+        corrected[4] = (byte)response.StatusWord;
+        return Transmit(corrected, ct);
     }
 
     private ResponseApdu Transmit(byte[] command, CancellationToken ct)

@@ -33,9 +33,23 @@ public class ChipTextTests
         Assert.Null(date.Day);
     }
 
-    [Fact]
-    public void A_placeholder_birth_date_is_null()
+    [Theory]
+    [InlineData("01010001")]
+    [InlineData("01010000")]
+    [InlineData("45132000")]
+    [InlineData("31042000")]
+    [InlineData("29022001")]
+    public void A_placeholder_or_invalid_birth_date_is_null(string text)
     {
-        Assert.Null(ChipText.BirthDate("01010001"));
+        Assert.Null(ChipText.BirthDate(text));
+    }
+
+    [Fact]
+    public void A_birth_date_can_have_a_known_month_or_a_leap_day()
+    {
+        var partial = ChipText.BirthDate("00022000")!;
+        Assert.Equal(2, partial.Month);
+        Assert.Null(partial.Day);
+        Assert.Equal(new DateTime(2000, 2, 29), ChipText.BirthDate("29022000")!.AsDateTime);
     }
 }

@@ -48,6 +48,36 @@ public class CardCommandsTests
     }
 
     [Fact]
+    public void Send_keeps_all_chained_data_and_corrects_get_response_length()
+    {
+        var select = Apdu.SelectFile(0x0F02);
+        var middle = Enumerable.Range(0, 256).Select(i => (byte)i).ToArray();
+        using var card = new ScriptedCard(
+            (select, new ResponseApdu(new byte[] { 0x42 }, 0x6100)),
+            (Apdu.GetResponse(0), new ResponseApdu(middle, 0x6103)),
+            (Apdu.GetResponse(3), new ResponseApdu(Array.Empty<byte>(), 0x6C02)),
+            (Apdu.GetResponse(2), new ResponseApdu(new byte[] { 0x12, 0x34 }, 0x9000)));
+        var commands = new CardCommands(card);
+
+        var response = commands.Send(select, TestContext.Current.CancellationToken);
+
+        Assert.Equal(0x9000, response.StatusWord);
+        Assert.Equal(new byte[] { 0x42 }.Concat(middle).Concat(new byte[] { 0x12, 0x34 }), response.Data);
+    }
+
+    [Fact]
+    public void Send_returns_6Cxx_for_select_without_le()
+    {
+        var select = Apdu.SelectFile(0x0F02);
+        using var card = new ScriptedCard((select, new ResponseApdu(Array.Empty<byte>(), 0x6C04)));
+        var commands = new CardCommands(card);
+
+        var response = commands.Send(select, TestContext.Current.CancellationToken);
+
+        Assert.Equal(0x6C04, response.StatusWord);
+    }
+
+    [Fact]
     public void SendExpectingSuccess_throws_chip_error_with_status_word()
     {
         var (_, commands) = SelectedFile(t0: false);
@@ -66,5 +96,23 @@ public class CardCommandsTests
 
         Assert.ThrowsAny<OperationCanceledException>(() => commands.Send(Apdu.ReadBinary(0, 16), new CancellationToken(canceled: true)));
         Assert.Equal(sent, card.Commands.Count);
+    }
+
+    private sealed class ScriptedCard(params (byte[] Command, ResponseApdu Response)[] exchanges) : ICardChannel
+    {
+        private readonly Queue<(byte[] Command, ResponseApdu Response)> _exchanges = new(exchanges);
+
+        public byte[] Atr => Array.Empty<byte>();
+
+        public ResponseApdu Transmit(byte[] command)
+        {
+            var exchange = _exchanges.Dequeue();
+            Assert.Equal(exchange.Command, command);
+            return exchange.Response;
+        }
+
+        public IDisposable BeginTransaction() => throw new NotSupportedException();
+
+        public void Dispose() => Assert.Empty(_exchanges);
     }
 }

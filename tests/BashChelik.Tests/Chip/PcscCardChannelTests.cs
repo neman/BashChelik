@@ -24,6 +24,8 @@ public class PcscCardChannelTests
     [Theory]
     [InlineData("no service", false, DocumentReadFailure.NoReader)]
     [InlineData("unknown reader", false, DocumentReadFailure.NoReader)]
+    [InlineData("missing library", false, DocumentReadFailure.NoReader)]
+    [InlineData("failed initialization", false, DocumentReadFailure.NoReader)]
     [InlineData("no card", false, DocumentReadFailure.NoCard)]
     [InlineData("no card", true, DocumentReadFailure.CardRemoved)]
     [InlineData("removed", true, DocumentReadFailure.CardRemoved)]
@@ -34,6 +36,8 @@ public class PcscCardChannelTests
         {
             "no service" => new NoServiceException(SCardError.NoService),
             "unknown reader" => new UnknownReaderException(SCardError.UnknownReader),
+            "missing library" => new DllNotFoundException(),
+            "failed initialization" => new TypeInitializationException("PCSC", new DllNotFoundException()),
             "no card" => new NoSmartcardException(SCardError.NoSmartcard),
             "removed" => new RemovedCardException(SCardError.RemovedCard),
             _ => new ReaderUnavailableException(SCardError.ReaderUnavailable),

@@ -20,6 +20,7 @@ internal static class CardEdge
     private const ushort FirstFile = 0x7100;
     private const ushort LastFile = 0x710F;
     private const byte DerSequence = 0x30;
+    private const int LengthPrefixSize = 2;
 
     public static IReadOnlyList<HolderCertificate> ReadCertificates(ChipFileReader files, CancellationToken ct)
     {
@@ -36,28 +37,30 @@ internal static class CardEdge
                 continue;
 
             int length = start.Data[0] | (start.Data[1] << 8);
-            certificates.Add(ReadCertificate(files.Commands, fid, length, ct));
+            if (length < 4 || LengthPrefixSize + length > Apdu.MaxBinaryFileLength)
+                continue;
+
+            var body = ReadBody(files.Commands, length, ct);
+            if (body is not null && DecodeCertificate(body) is { } certificate)
+                certificates.Add(certificate);
         }
 
         return certificates;
     }
 
-    private static HolderCertificate ReadCertificate(CardCommands commands, ushort fid, int length, CancellationToken ct)
+    private static HolderCertificate? DecodeCertificate(byte[] body)
     {
         try
         {
-            if (length < 4)
-                throw new InvalidDataException("too short");
-            var body = ReadExactly(commands, 2, length, ct);
             var der = body[0] == 0x01 && body[1] == 0x00 ? Zlib.Inflate(body.Skip(4).ToArray()) : body;
             if (der.Length == 0)
-                throw new InvalidDataException("empty");
+                return null;
             var certificate = Load(der);
             return new HolderCertificate(PurposeOf(certificate), certificate);
         }
-        catch (Exception e) when (e is InvalidDataException or CryptographicException or ArgumentException or IndexOutOfRangeException)
+        catch (Exception e) when (e is InvalidDataException or CryptographicException or ArgumentException)
         {
-            throw new DocumentReadException(DocumentReadFailure.ChipError, $"File {fid:X4} in the certificate applet is not a readable certificate.", innerException: e);
+            return null;
         }
     }
 
@@ -70,16 +73,17 @@ internal static class CardEdge
             ? CertificatePurpose.Signing
             : CertificatePurpose.Authentication;
 
-    private static byte[] ReadExactly(CardCommands commands, int offset, int length, CancellationToken ct)
+    private static byte[]? ReadBody(CardCommands commands, int length, CancellationToken ct)
     {
         using var bytes = new MemoryStream(length);
         while (bytes.Length < length)
         {
-            var chunk = commands.SendExpectingSuccess(
-                Apdu.ReadBinary(offset + (int)bytes.Length, (byte)Math.Min(255, length - bytes.Length)), ct);
-            if (chunk.Length == 0)
-                throw new DocumentReadException(DocumentReadFailure.ChipError, "A certificate file ended before its declared length.");
-            bytes.Write(chunk, 0, chunk.Length);
+            var remaining = length - (int)bytes.Length;
+            var response = commands.Send(
+                Apdu.ReadBinary(LengthPrefixSize + (int)bytes.Length, (byte)Math.Min(255, remaining)), ct);
+            if (!response.IsSuccess || response.Data.Length == 0 || response.Data.Length > remaining)
+                return null;
+            bytes.Write(response.Data, 0, response.Data.Length);
         }
 
         return bytes.ToArray();
